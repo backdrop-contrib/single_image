@@ -5,7 +5,7 @@
  */
 
 /**
- * Implements image_field_formatter_info().
+ * Implements hook_field_formatter_info().
  */
 function single_image_field_formatter_info() {
   $formatters = array(
