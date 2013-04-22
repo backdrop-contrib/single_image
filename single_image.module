@@ -59,8 +59,12 @@ function single_image_field_formatter_settings_summary($field, $instance, $view_
  * Implements hook_field_formatter_view().
  */
 function single_image_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
-  $delta = $display['settings']['single_image_delta'];
-  $which = isset($items[$delta]) ? $delta : array_rand($items);
-  $items = array($items[$which]);
-  return image_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display);
+  $element = array();
+  if ($items) {
+    $delta = $display['settings']['single_image_delta'];
+    $which = isset($items[$delta]) ? $delta : array_rand($items);
+    $items = array($items[$which]);
+    $element = image_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display);
+  }
+  return $element;
 }
