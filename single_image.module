@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Main file for sinagle_image formatter module.
+ * Displays only one image from a multiple-value image field.
  */
 
 /**
@@ -10,11 +10,12 @@
 function single_image_field_formatter_info() {
   $formatters = array(
     'single_image' => array(
-      'label' => t('Single Image'), 
-      'field types' => array('image'), 
+      'label' => t('Single Image'),
+      'field types' => array('image'),
       'settings' => array(
         'image_style' => '',
         'image_link' => '',
+        'image_float' => '',
         'single_image_delta' => '',
       ),
     ),
@@ -27,18 +28,18 @@ function single_image_field_formatter_info() {
  * Implements hook_field_formatter_settings_form().
  */
 function single_image_field_formatter_settings_form($field, $instance, $view_mode, $form, &$form_state) {
-  // Get default 
+  // Start with the core image field formatter.
   $element = image_field_formatter_settings_form($field, $instance, $view_mode, $form, $form_state);
   $display = $instance['display'][$view_mode];
   $settings = $display['settings'];
 
   $element['single_image_delta'] = array(
-    '#title' => t('Image to display'),
-    '#description' => t('Chose which image number to display.'),
-    '#type' => 'textfield',
+    '#title' => t('Delta value for the selected image'),
+    '#description' => t('Select 0 for the first image, 1 for the second, etc.'),
+    '#type' => 'number',
+    '#min' => '0',
     '#default_value' => $settings['single_image_delta'],
     '#empty_option' => t('Random'),
-    '#element_validate' => array('element_validate_integer_positive'),
   );
 
   return $element;
@@ -50,8 +51,10 @@ function single_image_field_formatter_settings_form($field, $instance, $view_mod
 function single_image_field_formatter_settings_summary($field, $instance, $view_mode) {
   $display = $instance['display'][$view_mode];
   $settings = $display['settings'];
+
   $summary = image_field_formatter_settings_summary($field, $instance, $view_mode);
-  $summary .= '<br />' . T('Image to display: @number', array('@number' => $settings['single_image_delta']));
+  $summary .= '<br />' . t('Delta: @number', array('@number' => $settings['single_image_delta']));
+
   return $summary;
 }
 
@@ -62,9 +65,6 @@ function single_image_field_formatter_view($entity_type, $entity, $field, $insta
   $element = array();
   if ($items) {
     $delta = $display['settings']['single_image_delta'];
-    if($delta > 0) {
-      $delta = $delta - 1;
-    }
     $which = isset($items[$delta]) ? $delta : array_rand($items);
     $items = array($items[$which]);
     $element = image_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display);

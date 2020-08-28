@@ -1,5 +1,7 @@
+type = module
 name = Single Image Formatter
-description = Print only one image on a multiple images field
-core = 7.x
+description = Displays only one image from a multiple-value image field.
+backdrop = 1.x
+
 package = Fields
 dependencies[] = image
